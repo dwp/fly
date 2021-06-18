@@ -1,29 +1,29 @@
 jobs:
-  - name: dataworks-repo-template-docker-pr
+  - name: fly-pr
     plan:
-      - get: dataworks-repo-template-docker-pr
+      - get: fly-pr
         trigger: true
         version: every
-      - put: dataworks-repo-template-docker-pr
+      - put: fly-pr
         params:
-          path: dataworks-repo-template-docker-pr
+          path: fly-pr
           status: pending
       - .: (( inject meta.plan.terraform-bootstrap ))
         input_mapping:
-          dataworks-repo-template-docker: dataworks-repo-template-docker-pr
+          fly: fly-pr
       - .: (( inject meta.plan.terraform-plan ))
         input_mapping:
-          dataworks-repo-template-docker: dataworks-repo-template-docker-pr
+          fly: fly-pr
         params:
           TF_WORKSPACE: "management"
           DETAILED_EXITCODE: ""
         on_failure:
-          put: dataworks-repo-template-docker-pr
+          put: fly-pr
           params:
-            path: dataworks-repo-template-docker-pr
+            path: fly-pr
             status: failure
         on_success:
-          put: dataworks-repo-template-docker-pr
+          put: fly-pr
           params:
-            path: dataworks-repo-template-docker-pr
+            path: fly-pr
             status: success
